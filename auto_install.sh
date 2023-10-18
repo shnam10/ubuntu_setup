@@ -10,24 +10,10 @@ user_can_sudo() {
   ! LANG= sudo -n -v 2>&1 | grep -q "may not run sudo"
 }
 
-install_neovim() {
-  RUN=$(user_can_sudo && echo "sudo" || echo "command")
-  $RUN add-apt-repository ppa:neovim-ppa/stable 
-  $RUN apt-get update -y
-  $RUN apt-get install neovim -y
-}
-
 install_chrome() {
   RUN=$(user_can_sudo && echo "sudo" || echo "command")
   wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
   $RUN dpkg -i google-chrome-stable_current_amd64.deb
-}
-
-install_notion() {
-  RUN=$(user_can_sudo && echo "sudo" || echo "command")
-  echo "deb [trusted=yes] https://apt.fury.io/notion-repackaged/ /" | sudo tee /etc/apt/sources.list.d/notion-repackaged.list
-  $RUN apt update
-  $RUN apt install notion-app-enhanced  
 }
 
 install_simple_screen_recorder() {
@@ -49,6 +35,23 @@ install_docker() {
   $RUN apt-get install docker-ce docker-ce-cli containerd.io -y
 }
 
+install_vscode() {
+  RUN=$(user_can_sudo && echo "sudo" || echo "command")
+
+  $RUN apt install software-properties-common apt-transport-https wget -y
+  wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
+  $RUN add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
+  $RUN apt install code
+}
+
+install_beyondcompare() {
+  RUN=$(user_can_sudo && echo "sudo" || echo "command")
+
+  wget https://www.scootersoftware.com/bcompare-4.4.6.27483_amd64.deb
+  $RUN apt update
+  $RUN apt install ./bcompare-4.4.6.27483_amd64.deb
+}
+
 main() {
   RUN=$(user_can_sudo && echo "sudo" || echo "command")
   
@@ -63,13 +66,6 @@ main() {
   # NOTE: It requires typing `enter` key, so automatic installation may breaks
   # install_chrome
   
-  # dconf-editor to change the order of favorites
-  # https://askubuntu.com/questions/1108474/how-to-drag-and-move-icons-in-ubuntu-18-04-1-favourites-bar
-  sudo apt install dconf-editor
-  
-  # Notion 
-  install_notion
-    
   # Set minimal C++ example 
   $RUN apt install cmake libeigen3-dev libboost-all-dev -y
 
@@ -93,6 +89,19 @@ main() {
   
   # Docker
   install_docker
+
+  # latex
+  # NOTE: If you want to install full version, use `texlive-full` instead
+  $RUN apt install texlive-latex-extra -y
+
+  # VSCode
+  install_vscode
+
+  # Beyond Compare
+  install_beyondcompare
+
+  # Zotero
+  $RUN apt install zotero
 }
 
 main 
