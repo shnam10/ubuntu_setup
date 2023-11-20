@@ -8,4 +8,6 @@ git checkout tags/${CERES_VERSION}
 mkdir build && cd build
 cmake ..
 make
-sudo make install
+
+# Sophus
+git clone https://github.com/strasdat/Sophus
